@@ -23,7 +23,7 @@ import (
 
 const assertionType = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
 
-// Client 是 Partner Backend 使用的 Supperapp Embed SSO 客户端。
+// Client 是 Partner Backend 使用的 Superapp Embed SSO 客户端。
 type Client struct {
 	BaseURL    string
 	ClientID   string
@@ -225,7 +225,7 @@ func decodeProtocolError(response *http.Response) error {
 	var result ProtocolError
 	result.Status = response.StatusCode
 	if err := decodeJSON(response.Body, &result); err != nil {
-		return fmt.Errorf("Supperapp Embed endpoint returned HTTP %d", response.StatusCode)
+		return fmt.Errorf("Superapp Embed endpoint returned HTTP %d", response.StatusCode)
 	}
 	return &result
 }
@@ -247,7 +247,7 @@ func fixedWidthECDSASignature(r, s *big.Int, size int) []byte {
 	return result
 }
 
-// PublicJWK 返回可登记到 Supperapp Admin API 的公钥 JWK。
+// PublicJWK 返回可登记到 Superapp Admin API 的公钥 JWK。
 func PublicJWK(signer crypto.Signer, keyID string) (json.RawMessage, error) {
 	switch key := signer.Public().(type) {
 	case *ecdsa.PublicKey:

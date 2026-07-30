@@ -1,4 +1,4 @@
-# Supperapp Embed Go SDK
+# Superapp Embed Go SDK
 
 Partner Backend SDK，负责：
 
