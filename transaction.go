@@ -35,7 +35,7 @@ type Bootstrap struct {
 	Scopes        []string `json:"scopes"`
 }
 
-// TransactionStore 必须以一次性语义保存和取出事务。生产环境可用 Redis 实现。
+// TransactionStore 必须以一次性语义保存和取出事务。
 type TransactionStore interface {
 	Put(context.Context, Transaction) error
 	Take(context.Context, string) (Transaction, error)
@@ -109,7 +109,7 @@ func (manager *TransactionManager) Complete(
 	return transaction, nil
 }
 
-// MemoryTransactionStore 只适用于单进程 Demo 和测试；生产环境应实现 Redis Store。
+// MemoryTransactionStore 只适用于单进程 Demo 和测试；多实例环境应使用共享原子存储。
 type MemoryTransactionStore struct {
 	mu    sync.Mutex
 	items map[string]Transaction

@@ -247,7 +247,7 @@ func fixedWidthECDSASignature(r, s *big.Int, size int) []byte {
 	return result
 }
 
-// PublicJWK 返回可登记到 Superapp Admin API 的公钥 JWK。
+// PublicJWK 返回接入登记所需且不包含私钥材料的公钥 JWK。
 func PublicJWK(signer crypto.Signer, keyID string) (json.RawMessage, error) {
 	switch key := signer.Public().(type) {
 	case *ecdsa.PublicKey:

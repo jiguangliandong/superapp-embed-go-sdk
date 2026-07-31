@@ -7,7 +7,7 @@ Partner Backend SDK，负责：
 - 兑换授权码、刷新、撤销 Token 和读取 UserInfo。
 
 `MemoryTransactionStore` 只用于 Demo/测试；多实例生产服务应实现
-`TransactionStore` 并使用 Redis 的原子取出语义。
+`TransactionStore`，并保证 `Take` 是跨实例的原子读取后删除。
 
 ```go
 store := embedsdk.NewMemoryTransactionStore()
