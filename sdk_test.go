@@ -87,8 +87,8 @@ func TestExchangeUsesPrivateKeyJWT(t *testing.T) {
 	}
 }
 
-func TestUserInfoDecodesStableAvatarURL(t *testing.T) {
-	const avatarURL = "https://media.superapp.example/assets/avatar/file_01KTEST"
+func TestUserInfoDecodesCompatibleAndPublicAvatarURLs(t *testing.T) {
+	const avatarPublicURL = "https://media.superapp.example/assets/avatar/file_01KTEST"
 	server := httptest.NewServer(http.HandlerFunc(func(
 		response http.ResponseWriter,
 		request *http.Request,
@@ -101,8 +101,10 @@ func TestUserInfoDecodesStableAvatarURL(t *testing.T) {
 		}
 		response.Header().Set("Content-Type", "application/json")
 		_, _ = response.Write([]byte(
-			`{"open_id":"eoi_1","display_name":"Example User","avatar_url":"` +
-				avatarURL + `"}`,
+			`{"open_id":"eoi_1","display_name":"Example User",` +
+				`"avatar_url":"https://objects.example/avatar",` +
+				`"avatar_url_expires_at":"2026-08-04T10:15:00Z",` +
+				`"avatar_public_url":"` + avatarPublicURL + `"}`,
 		))
 	}))
 	defer server.Close()
@@ -112,7 +114,10 @@ func TestUserInfoDecodesStableAvatarURL(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if userinfo.AvatarURL == nil || *userinfo.AvatarURL != avatarURL {
-		t.Fatalf("avatar URL = %v", userinfo.AvatarURL)
+	if userinfo.AvatarURL == nil || *userinfo.AvatarURL != "https://objects.example/avatar" ||
+		userinfo.AvatarURLExpiresAt == nil ||
+		!userinfo.AvatarURLExpiresAt.Equal(time.Date(2026, 8, 4, 10, 15, 0, 0, time.UTC)) ||
+		userinfo.AvatarPublicURL == nil || *userinfo.AvatarPublicURL != avatarPublicURL {
+		t.Fatalf("userinfo = %#v", userinfo)
 	}
 }
