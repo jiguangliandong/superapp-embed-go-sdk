@@ -45,13 +45,14 @@ type Token struct {
 }
 
 type UserInfo struct {
-	OpenID             string     `json:"open_id"`
-	DisplayName        *string    `json:"display_name,omitempty"`
-	AvatarURL          *string    `json:"avatar_url,omitempty"`
-	AvatarURLExpiresAt *time.Time `json:"avatar_url_expires_at,omitempty"`
-	ContactEmail       *string    `json:"contact_email,omitempty"`
-	ContactPhone       *string    `json:"contact_phone,omitempty"`
-	KYCStatus          *string    `json:"kyc_status,omitempty"`
+	OpenID      string  `json:"open_id"`
+	DisplayName *string `json:"display_name,omitempty"`
+	// AvatarURL 是包含不可变文件标识的稳定公共地址；用户更换头像后，后续 UserInfo
+	// 响应会返回新的地址。调用方不需要按签名 URL 的过期时间刷新当前地址。
+	AvatarURL    *string `json:"avatar_url,omitempty"`
+	ContactEmail *string `json:"contact_email,omitempty"`
+	ContactPhone *string `json:"contact_phone,omitempty"`
+	KYCStatus    *string `json:"kyc_status,omitempty"`
 }
 
 type ProtocolError struct {

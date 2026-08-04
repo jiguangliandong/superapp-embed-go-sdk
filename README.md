@@ -6,6 +6,9 @@ Partner Backend SDK，负责：
 - 使用 ES256/RS256 `private_key_jwt` 认证；
 - 兑换授权码、刷新、撤销 Token 和读取 UserInfo。
 
+UserInfo 的 `AvatarURL` 是包含不可变文件标识的稳定公共地址。用户更换头像后会返回
+新的地址；调用方不需要按临时签名 URL 的过期时间刷新当前地址。
+
 `MemoryTransactionStore` 只用于 Demo/测试；多实例生产服务使用
 `RedisTransactionStore`。Redis 实现会使用 AES-256-GCM 加密完整交易，并保证
 `Take` 是跨实例的原子读取后删除。
