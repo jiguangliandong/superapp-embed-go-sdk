@@ -86,3 +86,33 @@ func TestExchangeUsesPrivateKeyJWT(t *testing.T) {
 		t.Fatalf("open_id = %q", token.OpenID)
 	}
 }
+
+func TestUserInfoDecodesStableAvatarURL(t *testing.T) {
+	const avatarURL = "https://media.superapp.example/assets/avatar/file_01KTEST"
+	server := httptest.NewServer(http.HandlerFunc(func(
+		response http.ResponseWriter,
+		request *http.Request,
+	) {
+		if request.URL.Path != "/api/embed/v1/userinfo" {
+			t.Errorf("path = %q", request.URL.Path)
+		}
+		if request.Header.Get("Authorization") != "Bearer access-token" {
+			t.Errorf("Authorization = %q", request.Header.Get("Authorization"))
+		}
+		response.Header().Set("Content-Type", "application/json")
+		_, _ = response.Write([]byte(
+			`{"open_id":"eoi_1","display_name":"Example User","avatar_url":"` +
+				avatarURL + `"}`,
+		))
+	}))
+	defer server.Close()
+
+	client := Client{BaseURL: server.URL}
+	userinfo, err := client.UserInfo(context.Background(), "access-token")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if userinfo.AvatarURL == nil || *userinfo.AvatarURL != avatarURL {
+		t.Fatalf("avatar URL = %v", userinfo.AvatarURL)
+	}
+}
