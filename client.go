@@ -21,9 +21,18 @@ import (
 	"time"
 )
 
-const assertionType = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+const (
+	assertionType = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+	tokenPath     = "/api/user/v1/embed/oauth/token"
+	revokePath    = "/api/user/v1/embed/oauth/revoke"
+	userInfoPath  = "/api/user/v1/embed/userinfo"
+)
 
 // Client 是 Partner Backend 使用的 Superapp Embed SSO 客户端。
+//
+// BaseURL 必须等于当前环境 User Center 的 Issuer origin。Token、Revoke 和
+// UserInfo 路径固定为 /api/user/v1/embed/...，client_assertion 的 aud 等于完整
+// Token URL。
 type Client struct {
 	BaseURL    string
 	ClientID   string
@@ -31,6 +40,18 @@ type Client struct {
 	PrivateKey crypto.Signer
 	HTTPClient *http.Client
 	Now        func() time.Time
+}
+
+func (client *Client) tokenURL() string {
+	return strings.TrimRight(client.BaseURL, "/") + tokenPath
+}
+
+func (client *Client) revokeURL() string {
+	return strings.TrimRight(client.BaseURL, "/") + revokePath
+}
+
+func (client *Client) userInfoURL() string {
+	return strings.TrimRight(client.BaseURL, "/") + userInfoPath
 }
 
 type Token struct {
@@ -87,7 +108,7 @@ func (client *Client) Refresh(ctx context.Context, refreshToken string) (Token, 
 }
 
 func (client *Client) Revoke(ctx context.Context, token string) error {
-	endpoint := strings.TrimRight(client.BaseURL, "/") + "/api/embed/v1/oauth/revoke"
+	endpoint := client.revokeURL()
 	values := url.Values{"token": {token}}
 	if err := client.authenticateForm(values, endpoint); err != nil {
 		return err
@@ -104,7 +125,7 @@ func (client *Client) Revoke(ctx context.Context, token string) error {
 }
 
 func (client *Client) UserInfo(ctx context.Context, accessToken string) (UserInfo, error) {
-	endpoint := strings.TrimRight(client.BaseURL, "/") + "/api/embed/v1/userinfo"
+	endpoint := client.userInfoURL()
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
 		return UserInfo{}, err
@@ -126,7 +147,7 @@ func (client *Client) UserInfo(ctx context.Context, accessToken string) (UserInf
 }
 
 func (client *Client) token(ctx context.Context, values url.Values) (Token, error) {
-	endpoint := strings.TrimRight(client.BaseURL, "/") + "/api/embed/v1/oauth/token"
+	endpoint := client.tokenURL()
 	if err := client.authenticateForm(values, endpoint); err != nil {
 		return Token{}, err
 	}

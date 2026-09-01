@@ -1,10 +1,24 @@
 # Superapp Embed Go SDK
 
+版本：`v0.0.3`
+
 Partner Backend SDK，负责：
 
 - 服务端生成并一次性保存 `state` 与 PKCE verifier；
 - 使用 ES256/RS256 `private_key_jwt` 认证；
 - 兑换授权码、刷新、撤销 Token 和读取 UserInfo。
+
+`Client.BaseURL` 必须等于当前环境 User Center 的 Issuer origin（本地默认为
+`http://localhost:8081`）。SDK 会请求：
+
+- `{BaseURL}/api/user/v1/embed/oauth/token`
+- `{BaseURL}/api/user/v1/embed/oauth/revoke`
+- `{BaseURL}/api/user/v1/embed/userinfo`
+
+`private_key_jwt` 的 `aud` 等于完整 Token URL，因此不要把业务网关 origin 和
+User Center Issuer 混用。Discovery 在
+`{BaseURL}/.well-known/superapp-embed-configuration`，本 SDK 不自动拉取，以免
+`aud` 在运行时漂移。
 
 UserInfo 的 `AvatarURL` 是包含不可变文件标识的稳定公共地址。用户更换头像后会返回
 新的地址；调用方不需要按临时签名 URL 的过期时间刷新当前地址。
