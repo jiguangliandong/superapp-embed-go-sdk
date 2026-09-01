@@ -63,6 +63,9 @@ func TestExchangeUsesPrivateKeyJWT(t *testing.T) {
 		t.Fatal(err)
 	}
 	server := httptest.NewServer(http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {
+		if request.URL.Path != "/api/user/v1/embed/oauth/token" {
+			t.Errorf("path = %q", request.URL.Path)
+		}
 		if err := request.ParseForm(); err != nil {
 			t.Fatal(err)
 		}
@@ -93,7 +96,7 @@ func TestUserInfoDecodesStableAvatarURL(t *testing.T) {
 		response http.ResponseWriter,
 		request *http.Request,
 	) {
-		if request.URL.Path != "/api/embed/v1/userinfo" {
+		if request.URL.Path != "/api/user/v1/embed/userinfo" {
 			t.Errorf("path = %q", request.URL.Path)
 		}
 		if request.Header.Get("Authorization") != "Bearer access-token" {
