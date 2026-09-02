@@ -23,15 +23,15 @@ import (
 
 const (
 	assertionType = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
-	tokenPath     = "/api/user/v1/embed/oauth/token"
-	revokePath    = "/api/user/v1/embed/oauth/revoke"
-	userInfoPath  = "/api/user/v1/embed/userinfo"
+	tokenPath     = "/api/user/v1/open/embed/oauth/token"
+	revokePath    = "/api/user/v1/open/embed/oauth/revoke"
+	userInfoPath  = "/api/user/v1/open/embed/userinfo"
 )
 
 // Client 是 Partner Backend 使用的 Superapp Embed SSO 客户端。
 //
 // BaseURL 必须等于当前环境 User Center 的 Issuer origin。Token、Revoke 和
-// UserInfo 路径固定为 /api/user/v1/embed/...，client_assertion 的 aud 等于完整
+// UserInfo 路径固定为 /api/user/v1/open/embed/...，client_assertion 的 aud 等于完整
 // Token URL。
 type Client struct {
 	BaseURL    string
