@@ -11,9 +11,9 @@ Partner Backend SDK，负责：
 `Client.BaseURL` 必须等于当前环境 User Center 的 Issuer origin（本地默认为
 `http://localhost:8081`）。SDK 会请求：
 
-- `{BaseURL}/api/user/v1/embed/oauth/token`
-- `{BaseURL}/api/user/v1/embed/oauth/revoke`
-- `{BaseURL}/api/user/v1/embed/userinfo`
+- `{BaseURL}/api/user/v1/open/embed/oauth/token`
+- `{BaseURL}/api/user/v1/open/embed/oauth/revoke`
+- `{BaseURL}/api/user/v1/open/embed/userinfo`
 
 `private_key_jwt` 的 `aud` 等于完整 Token URL，因此不要把业务网关 origin 和
 User Center Issuer 混用。Discovery 在
